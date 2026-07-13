@@ -1,0 +1,208 @@
+/*
+ * DESIGN TOKENS + UTILITIES — Amanita Festival (checkout redesign)
+ * ─────────────────────────────────────────────────────────────────
+ * Extracto de `app/globals.css` del repo de la web de Amanita: SOLO los
+ * bloques que la maqueta del checkout usa. Los tokens son los reales de la
+ * marca (extraídos del Webflow vivo — BRAND_TOKENS.md del repo de Amanita).
+ *
+ * Cómo se consume: la maqueta es Tailwind y mapea estas variables a
+ * utilities (`text-sand`, `bg-cream`, `font-condensed`…) vía
+ * `theme.extend` — el snippet exacto de tailwind.config está al final de
+ * este archivo, comentado. EdgeOS ya usa el mismo patrón
+ * (`hsl(var(--...))` en su tailwind.config), así que esto se integra
+ * sumando las variables y el extend, sin tocar su setup.
+ *
+ * Los estilos propios de la maqueta (`.ck-section`, `.ck-gem*`,
+ * `.ck-drawer-*`) NO están acá: viven inline en un <style> dentro de
+ * `CheckoutExperience.tsx` — viajan con el componente.
+ */
+
+/* ── 1 · Tokens de marca (:root) ─────────────────────────────────── */
+/* Paleta + tokens semánticos. Los semánticos (bg/surface/text/muted/line)
+   son los que .section-dark invierte — los componentes hijos funcionan en
+   claro y oscuro sin tocarlos. */
+:root {
+  /* paleta de marca */
+  --color-cream: #f1ebe3;      /* crema — base de toda la web */
+  --color-primary: #004a5a;    /* petróleo — color de marca dominante */
+  --color-deep: #042231;       /* navy profundo — overlays, secciones oscuras */
+  --color-deep-2: #0d3042;
+  --color-night: #010f16;      /* casi-negro — gradientes de fondo */
+  --color-accent: #0a9b9b;     /* teal interactivo (focus rings, hovers) */
+  --color-accent-2: #3295a4;
+  --color-mint: #b0d5ce;       /* menta — hovers suaves, texto destacado */
+  --color-sand: #c1aa88;       /* dorado arena — ornamentos, kickers, gemas */
+  --color-forest: #153b34;
+  --color-violet: #736b93;
+
+  /* tokens semánticos (tema claro base) */
+  --color-bg: var(--color-cream);
+  --color-surface: #faf6ef;    /* blanco cálido para cards/inputs sobre crema */
+  --color-surface-2: #e7dfd2;
+  --color-text: var(--color-deep);
+  --color-text-muted: #4a6670;
+  --color-line: rgba(4, 34, 49, 0.16);
+
+  --radius-lg: 0.75rem;
+  --radius-xl: 1.25rem;
+  --radius-2xl: 2rem;
+}
+
+/* ── 2 · Base ────────────────────────────────────────────────────── */
+/* (en el repo original va dentro de @layer base de Tailwind) */
+body {
+  background-color: var(--color-bg);
+  color: var(--color-text);
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+/* Amarante tiene UN solo peso (400): los headings display no llevan bold
+   sintético; el énfasis lo dan el tamaño y el uppercase. */
+h1,
+h2 {
+  font-weight: 400;
+}
+::selection {
+  background: var(--color-accent);
+  color: var(--color-cream);
+}
+
+/* ── 3 · .section-dark ───────────────────────────────────────────── */
+/* Sección oscura (navy): invierte los tokens semánticos. El wrapper raíz
+   del checkout es .section-dark con background transparente (el fondo lo
+   pone la capa fija con la foto del bosque + gradiente). */
+.section-dark {
+  --color-bg: var(--color-deep);
+  --color-surface: rgba(241, 235, 227, 0.06);
+  --color-surface-2: rgba(241, 235, 227, 0.12);
+  --color-text: var(--color-cream);
+  --color-text-muted: #a8bfc4;
+  --color-line: rgba(241, 235, 227, 0.18);
+  background-color: var(--color-deep);
+  color: var(--color-cream);
+}
+
+/* ── 4 · .dark-stars ─────────────────────────────────────────────── */
+/* Textura de estrellitas de marca sobre fondos oscuros (pseudo-elemento
+   para no bloquear LCP). La usa la capa de fondo del checkout y el panel
+   del drawer de FAQs. Asset: /brand/ornaments/bg-stars.webp (incluido). */
+.dark-stars {
+  position: relative;
+}
+.dark-stars::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: url('/brand/ornaments/bg-stars.webp') repeat;
+  background-size: 480px;
+  opacity: 0.1;
+  pointer-events: none;
+}
+
+/* ── 5 · .no-scrollbar ───────────────────────────────────────────── */
+/* Oculta la scrollbar nativa — la usa la nav de pills (scrolleable en
+   mobile). */
+.no-scrollbar {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
+/* ── 6 · Botones ornamentales ────────────────────────────────────── */
+/* El arte del marco (webp con interior transparente) se estira 100%/100%
+   sobre un fondo navy propio redondeado — las gemas que sobresalen del
+   radio quedan sobre el fondo de la sección. Los !important pisan el bg
+   de las variants de botón sin tocar su markup (en EdgeOS: aplicar la
+   clase sobre su <Button> de shadcn y listo).
+   La maqueta usa `.btn-ornate` (CTA primario: barra inferior, Confirmar
+   compra) y `.btn-ornate-2` (secundario: "Ver tickets" del estado vacío).
+   Existe una tercera variante (.btn-ornate-3) en la web; el checkout no
+   la usa. Assets: /brand/btn-primary.webp y /brand/btn-secondary-1.webp
+   (incluidos). */
+.btn-ornate,
+.btn-ornate-2 {
+  background-color: rgba(7, 19, 34, 0.92) !important;
+  background-size: 100% 100% !important;
+  background-repeat: no-repeat !important;
+  border-radius: 12px !important;
+  color: #f1ebe3 !important;
+}
+.btn-ornate {
+  background-image: url('/brand/btn-primary.webp') !important;
+}
+.btn-ornate-2 {
+  background-image: url('/brand/btn-secondary-1.webp') !important;
+}
+
+/* ── 7 · Animación de las estrellas titilantes ───────────────────── */
+/* La usa el componente Stars (compartidos/Stars.tsx) vía `animation`
+   inline. */
+@keyframes amTwinkle {
+  0%,
+  100% {
+    opacity: 0.25;
+  }
+  50% {
+    opacity: 0.9;
+  }
+}
+
+/* ── 8 · prefers-reduced-motion ──────────────────────────────────── */
+/* Regla global del design system de Amanita: TODO el motion se frena
+   (incluye amTwinkle y las animaciones .ck-* inline de la maqueta).
+   Mantenerla al portar. */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* ── 9 · Mapeo Tailwind (referencia) ─────────────────────────────── */
+/* Snippet del tailwind.config.ts de la maqueta (theme.extend) — es lo que
+   habilita las utilities que ven en el markup (`text-sand`, `bg-cream`,
+   `font-condensed`, `shadow-glow`…). Sumar estas claves al tailwind.config
+   de EdgeOS (conviven con sus tokens hsl):
+
+   colors: {
+     // semánticos (los invierte .section-dark)
+     bg: 'var(--color-bg)',
+     surface: 'var(--color-surface)',
+     'surface-2': 'var(--color-surface-2)',
+     text: 'var(--color-text)',
+     muted: 'var(--color-text-muted)',
+     line: 'var(--color-line)',
+     // marca
+     cream: 'var(--color-cream)',
+     primary: 'var(--color-primary)',   // ⚠️ si su config ya define `primary` (shadcn), renombrar acá y en el markup (ej. `brand`)
+     deep: 'var(--color-deep)',
+     'deep-2': 'var(--color-deep-2)',
+     night: 'var(--color-night)',
+     accent: 'var(--color-accent)',     // ⚠️ ídem si ya existe `accent` (shadcn suele definirla)
+     'accent-2': 'var(--color-accent-2)',
+     mint: 'var(--color-mint)',
+     sand: 'var(--color-sand)',
+     forest: 'var(--color-forest)',
+     violet: 'var(--color-violet)',
+   },
+   fontFamily: {
+     sans: ['var(--font-sans)', 'system-ui', 'sans-serif'],
+     display: ['var(--font-display)', 'serif'],
+     condensed: ['var(--font-condensed)', 'var(--font-sans)', 'sans-serif'],
+   },
+   borderRadius: {
+     lg: 'var(--radius-lg)',
+     xl: 'var(--radius-xl)',
+     '2xl': 'var(--radius-2xl)',
+   },
+   boxShadow: {
+     glow: '0 0 48px -12px var(--color-accent)',
+     'glow-sand': '0 0 48px -12px var(--color-sand)',
+   },
+*/
