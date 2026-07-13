@@ -50,7 +50,7 @@ const STEP_DATOS = SECTIONS.findIndex((s) => s.id === 'datos');
    (interior sand #bfa67f, texto deep AA, glow y hover más claro con lift).
    Tamaños compactos propios de la barra; el "← Volver" sigue secundario. */
 const GOLD_BAR_CTA =
-  'btn-ornate-2 btn-gold-fill flex shrink-0 items-center justify-center whitespace-nowrap !px-4 py-2.5 font-condensed text-xs font-medium uppercase tracking-[0.12em] transition-all duration-200 hover:-translate-y-0.5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-deep md:!px-6 md:text-sm';
+  'btn-ornate-2 btn-gold-fill ck-gold flex shrink-0 items-center justify-center whitespace-nowrap !px-4 py-2.5 font-condensed text-xs font-medium uppercase tracking-[0.12em] transition-all duration-200 hover:-translate-y-0.5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-deep md:!px-6 md:text-sm';
 
 type CartState = Record<string, number>;
 type CartAction = { type: 'inc'; id: string } | { type: 'dec'; id: string };
@@ -432,6 +432,13 @@ export function CheckoutExperience({ initialCountry = null }: { initialCountry?:
         .ck-gem-mid { aspect-ratio: 1400/122; mask-image: url(/brand/sep-gem-mid.webp); }
         .ck-gem-thin { aspect-ratio: 1400/169; mask-image: url(/brand/sep-gem-thin.webp); }
         .ck-gem-flourish { aspect-ratio: 1400/123; mask-image: url(/brand/sep-gem-flourish.webp); }
+        /* Ronda 3b (Agus): sin el glow difuso del btn-gold-fill de la home --
+           queda solo el ring nitido de 1px (el blur exterior lo hacia ver
+           borroso sobre la barra oscura). */
+        .ck-gold,
+        .ck-gold:hover {
+          box-shadow: 0 0 0 1px rgba(84, 62, 26, 0.22) !important;
+        }
       `}</style>
     </div>
   );

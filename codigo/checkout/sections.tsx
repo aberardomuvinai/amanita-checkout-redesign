@@ -14,7 +14,7 @@
  * Ronda 2 (Agus): "Tu información" pasa a ser "Tus Datos" (al final del
  * stepper, con campo WhatsApp); las FAQs generales salen del stepper al
  * FaqsDrawer global; Extras agrupa las cards por categoría.
- * Ronda 3 (Agus): botón de confirmar en DORADO (btn-ornate-2 + btn-gold-fill,
+ * Ronda 3 (Agus): botón de confirmar en DORADO (btn-ornate-2 + btn-gold-fill ck-gold,
  * como los botones que cobran de la home) + línea "Cargos por servicio (10%)"
  * en el resumen (el TOTAL ya la incluye, igual que la barra).
  */
@@ -932,7 +932,7 @@ export function ConfirmSection({
           <button
             type="button"
             onClick={onConfirm}
-            className="btn-ornate-2 btn-gold-fill mt-6 flex w-full items-center justify-center !px-6 !py-3.5 font-condensed text-sm font-medium uppercase tracking-[0.12em] transition-all duration-200 hover:-translate-y-0.5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-cream"
+            className="btn-ornate-2 btn-gold-fill ck-gold mt-6 flex w-full items-center justify-center !px-6 !py-3.5 font-condensed text-sm font-medium uppercase tracking-[0.12em] transition-all duration-200 hover:-translate-y-0.5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-cream"
           >
             Confirmar compra →
           </button>
