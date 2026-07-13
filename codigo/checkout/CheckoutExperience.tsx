@@ -439,6 +439,17 @@ export function CheckoutExperience({ initialCountry = null }: { initialCountry?:
         .ck-gold:hover {
           box-shadow: 0 0 0 1px rgba(84, 62, 26, 0.22) !important;
         }
+        /* Dorado SOLIDO para botones anchos (el frame webp del btn-ornate-2 se
+           estira feo en full-width): mismo fill/texto/ring, esquinas propias. */
+        .ck-gold-solid {
+          background-color: #bfa67f;
+          color: #0a1a24;
+          border-radius: 12px;
+          box-shadow: 0 0 0 1px rgba(84, 62, 26, 0.22);
+        }
+        .ck-gold-solid:hover {
+          background-color: #cdb48c;
+        }
       `}</style>
     </div>
   );
