@@ -14,6 +14,9 @@
  * Ronda 2 (Agus): "Tu información" pasa a ser "Tus Datos" (al final del
  * stepper, con campo WhatsApp); las FAQs generales salen del stepper al
  * FaqsDrawer global; Extras agrupa las cards por categoría.
+ * Ronda 3 (Agus): botón de confirmar en DORADO (btn-ornate-2 + btn-gold-fill,
+ * como los botones que cobran de la home) + línea "Cargos por servicio (10%)"
+ * en el resumen (el TOTAL ya la incluye, igual que la barra).
  */
 
 import { Fragment, useEffect, useRef, useState, type ReactNode } from 'react';
@@ -783,6 +786,7 @@ export function ConfirmSection({
   lines,
   subtotal,
   discount,
+  serviceFee,
   total,
   couponApplied,
   onApplyCoupon,
@@ -793,6 +797,8 @@ export function ConfirmSection({
   lines: CartLine[];
   subtotal: number;
   discount: number;
+  /** cargos por servicio (10% del neto post-cupón) — ya incluidos en total */
+  serviceFee: number;
   total: number;
   couponApplied: boolean;
   onApplyCoupon: (code: string) => boolean;
@@ -895,20 +901,24 @@ export function ConfirmSection({
             )}
           </div>
 
-          {/* totales */}
+          {/* totales (ronda 3): Subtotal → cupón (si aplica) → Cargos por
+              servicio (10% del neto, mismo estilo que Subtotal) → TOTAL que
+              YA incluye el fee — idéntico al de la barra, sin sorpresas */}
           <div className="mt-5 border-t pt-4" style={{ borderColor: 'rgba(4,34,49,0.12)' }}>
+            <div className="flex items-center justify-between text-sm" style={{ color: '#4a6670' }}>
+              <p>Subtotal</p>
+              <p className="font-condensed text-base">{formatARS(subtotal)}</p>
+            </div>
             {discount > 0 && (
-              <>
-                <div className="flex items-center justify-between text-sm" style={{ color: '#4a6670' }}>
-                  <p>Subtotal</p>
-                  <p className="font-condensed text-base">{formatARS(subtotal)}</p>
-                </div>
-                <div className="mt-1 flex items-center justify-between text-sm text-primary">
-                  <p>Cupón AMANITA10 (−10%)</p>
-                  <p className="font-condensed text-base">−{formatARS(discount)}</p>
-                </div>
-              </>
+              <div className="mt-1 flex items-center justify-between text-sm text-primary">
+                <p>Cupón AMANITA10 (−10%)</p>
+                <p className="font-condensed text-base">−{formatARS(discount)}</p>
+              </div>
             )}
+            <div className="mt-1 flex items-center justify-between text-sm" style={{ color: '#4a6670' }}>
+              <p>Cargos por servicio (10%)</p>
+              <p className="font-condensed text-base">{formatARS(serviceFee)}</p>
+            </div>
             <div className="mt-2 flex items-end justify-between">
               <p className="font-condensed text-sm font-medium uppercase tracking-[0.2em] text-primary">
                 Total
@@ -917,10 +927,12 @@ export function ConfirmSection({
             </div>
           </div>
 
+          {/* dorado como el CTA de la barra (ronda 3) — ring-offset crema
+              porque vive sobre la card clara */}
           <button
             type="button"
             onClick={onConfirm}
-            className="btn-ornate mt-6 flex w-full items-center justify-center !px-6 !py-3.5 font-condensed text-sm font-medium uppercase tracking-[0.12em]"
+            className="btn-ornate-2 btn-gold-fill mt-6 flex w-full items-center justify-center !px-6 !py-3.5 font-condensed text-sm font-medium uppercase tracking-[0.12em] transition-all duration-200 hover:-translate-y-0.5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-cream"
           >
             Confirmar compra →
           </button>

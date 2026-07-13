@@ -82,6 +82,8 @@ Capa `fixed` full-screen (en `CheckoutExperience.tsx`): foto del bosque (`artist
 2. **NADA de emojis de bandera** en el select de país del WhatsApp: no renderizan en Chrome/Windows (caen a "AR"/"BR" en texto plano feo). El select muestra **texto "AR +54"** — así está en la maqueta y así debe quedar.
 3. **Mobile 375px primero.** Cards de producto **verticales en mobile** (imagen 16:9 arriba) y **horizontales en desktop** (imagen a la izquierda, 40% del ancho, `object-cover` a alto completo). La nav de pills scrollea horizontal en mobile (`.no-scrollbar`) y el drawer de FAQs es full-screen en mobile / panel lateral de 480px en md+.
 
+- **CTA de avance dorado (ronda 3):** el botón "que cobra" (Ver Entradas / paso siguiente / Confirmar compra, en la barra inferior y bajo el resumen) usa `btn-ornate-2 btn-gold-fill` — marco ornamental + fill dorado `#bfa67f`, texto `#0a1a24` (AA), glow y hover `#cdb48c` con lift. El bloque CSS está en `codigo/estilos/design-tokens.css`. El "← Volver" queda secundario.
+
 ## 5 · Flujo y cambios vs checkout actual
 
 La maqueta replica el flujo live 1:1 **salvo** estos 6 cambios (ronda 2 de iteración con Agus, 12/7 — ya implementados en la maqueta). La columna derecha dice qué implica cada uno para EdgeOS:
@@ -94,6 +96,7 @@ La maqueta replica el flujo live 1:1 **salvo** estos 6 cambios (ronda 2 de itera
 | **4 · Hero sin "Total":** la barra inferior del hero no muestra total (todavía no se mostraron productos); en su lugar, texto "Elegí tu entrada para comenzar" + CTA "Ver Entradas →" (va a Tickets). Sin botón Volver en el hero. | Solo front. |
 | **5 · CTAs contextuales en la barra inferior** (total visible desde Tickets en adelante): Tickets → "Alojamiento →" · Alojamiento → "Extras →" · Extras → "Tus Datos →" · Tus Datos → "Confirmar →" · Confirmar → "Confirmar compra". "← Volver" en todos los pasos menos el hero. | Solo front. |
 | **6 · Campo WhatsApp en Tus Datos:** select de código de país (texto plano "AR +54" — ⚠️ sin emojis de bandera, no renderizan en Chrome/Windows) + input numérico, con el país preseleccionado **por IP real**. | ⚠️ **El único cambio que requiere backend:** persistir el teléfono en su modelo (humans/attendees) y usar su geo por IP —la misma que ya usan para el routing MP/Stripe— para preseleccionar el país. La maqueta YA lo resuelve por IP real server-side vía el header `x-vercel-ip-country` de Vercel (`page.tsx` → prop `initialCountry`; `?pais=XX` fuerza país para demos; `navigator.language` solo como fallback de dev local). EdgeOS replica el concepto con su propia geo. |
+| **7 · Cargos por servicio (10%):** línea visible en el resumen de Confirmar — `round((subtotal − descuento) × 0,10)` — e incluido SIEMPRE en el total de la barra inferior (mismo número en toda la experiencia). | ⚠️ **Regla de negocio/backend:** aplicar el fee del 10% en su cálculo de pago (verificar `amount` vs `amount_charged` y que MP/Stripe cobren el total CON fee); el porcentaje debería ser configurable por popup. |
 
 Todo lo demás (secciones single-page con una visible a la vez, barra TOTAL fija abajo, verificación por email, selección de cantidades, cupón, confirmación) mantiene el comportamiento del checkout actual — con la piel nueva.
 

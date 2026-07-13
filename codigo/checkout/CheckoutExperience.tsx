@@ -10,6 +10,9 @@
  * Ronda 2 (Agus): productos primero y "Tus Datos" al final (previo a
  * Confirmar); "Estacionamiento" pasa a "Extras"; FAQs fuera del stepper, en
  * un drawer global (pill en la nav); hero sin total y CTAs contextuales.
+ * Ronda 3 (Agus): CTA de avance de la barra en DORADO (btn-ornate-2 +
+ * btn-gold-fill, el look del botón "que cobra" de la home) y "Cargos por
+ * servicio" (10%) en el resumen de Confirmar + total de la barra.
  */
 
 import { useCallback, useEffect, useMemo, useReducer, useState } from 'react';
@@ -41,6 +44,13 @@ const SECTIONS = [
 const LAST = SECTIONS.length - 1;
 const STEP_TICKETS = SECTIONS.findIndex((s) => s.id === 'tickets');
 const STEP_DATOS = SECTIONS.findIndex((s) => s.id === 'datos');
+
+/* CTA dorado de avance (ronda 3): réplica exacta del botón "que cobra" de la
+   home (auditoría 12/7) — marco ornamental btn-ornate-2 + fill btn-gold-fill
+   (interior sand #bfa67f, texto deep AA, glow y hover más claro con lift).
+   Tamaños compactos propios de la barra; el "← Volver" sigue secundario. */
+const GOLD_BAR_CTA =
+  'btn-ornate-2 btn-gold-fill flex shrink-0 items-center justify-center whitespace-nowrap !px-4 py-2.5 font-condensed text-xs font-medium uppercase tracking-[0.12em] transition-all duration-200 hover:-translate-y-0.5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-deep md:!px-6 md:text-sm';
 
 type CartState = Record<string, number>;
 type CartAction = { type: 'inc'; id: string } | { type: 'dec'; id: string };
@@ -111,7 +121,11 @@ export function CheckoutExperience({ initialCountry = null }: { initialCountry?:
   const subtotal = useMemo(() => lines.reduce((acc, l) => acc + l.amount, 0), [lines]);
   const cartCount = useMemo(() => lines.reduce((acc, l) => acc + l.qty, 0), [lines]);
   const discount = couponApplied ? Math.round(subtotal * 0.1) : 0;
-  const total = subtotal - discount;
+  /* Cargos por servicio (ronda 3): 10% sobre el neto post-cupón, redondeado.
+     El TOTAL lo incluye SIEMPRE — la barra y el resumen de Confirmar muestran
+     el mismo número, sin sorpresas al llegar al pago. */
+  const serviceFee = Math.round((subtotal - discount) * 0.1);
+  const total = subtotal - discount + serviceFee;
 
   const infoErrors = getInfoErrors(buyer);
   const infoValid = Object.keys(infoErrors).length === 0;
@@ -295,6 +309,7 @@ export function CheckoutExperience({ initialCountry = null }: { initialCountry?:
             lines={lines}
             subtotal={subtotal}
             discount={discount}
+            serviceFee={serviceFee}
             total={total}
             couponApplied={couponApplied}
             onApplyCoupon={(code) => {
@@ -356,7 +371,7 @@ export function CheckoutExperience({ initialCountry = null }: { initialCountry?:
               <button
                 type="button"
                 onClick={() => goTo(STEP_TICKETS)}
-                className="btn-ornate flex shrink-0 items-center justify-center whitespace-nowrap !px-4 py-2.5 font-condensed text-xs font-medium uppercase tracking-[0.1em] md:!px-6 md:text-sm"
+                className={GOLD_BAR_CTA}
               >
                 Ver Entradas →
               </button>
@@ -382,7 +397,7 @@ export function CheckoutExperience({ initialCountry = null }: { initialCountry?:
               <button
                 type="button"
                 onClick={next}
-                className="btn-ornate flex shrink-0 items-center justify-center whitespace-nowrap !px-4 py-2.5 font-condensed text-xs font-medium uppercase tracking-[0.1em] md:!px-6 md:text-sm"
+                className={GOLD_BAR_CTA}
               >
                 {nextLabel} →
               </button>

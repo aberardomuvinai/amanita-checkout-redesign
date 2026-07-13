@@ -206,3 +206,25 @@ h2 {
      'glow-sand': '0 0 48px -12px var(--color-sand)',
    },
 */
+
+/* ── CTA dorado (ronda 3): fill dorado sobre el marco ornamental ── */
+/* Fill DORADO para el momento de plata (auditoría 12/7): mismo marco
+   ornamental, interior sand y texto deep — el botón que cobra tiene que ser el
+   más luminoso de la pantalla (antes el primario navy perdía contra cualquier
+   secundario teal). Se usa JUNTO al marco: `btn-ornate-2 btn-gold-fill`.
+   No es un botón nuevo: es un fill alternativo del sistema aprobado. */
+.btn-ornate.btn-gold-fill,
+.btn-ornate-2.btn-gold-fill,
+.btn-ornate-3.btn-gold-fill {
+  background-color: #bfa67f !important;
+  color: #0a1a24 !important;
+  text-shadow: none !important;
+  box-shadow:
+    0 0 0 1px rgba(84, 62, 26, 0.22),
+    0 4px 24px rgba(193, 170, 136, 0.38);
+}
+.btn-ornate.btn-gold-fill:hover,
+.btn-ornate-2.btn-gold-fill:hover,
+.btn-ornate-3.btn-gold-fill:hover {
+  background-color: #cdb48c !important;
+}
