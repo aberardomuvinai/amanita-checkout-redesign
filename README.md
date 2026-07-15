@@ -1,7 +1,7 @@
 # Rediseño del checkout de Amanita Festival — Paquete de handoff para EdgeOS
 
 **De:** equipo Amanita Festival · **Para:** equipo EdgeOS (SimpleFi)
-**Referencia viva:** https://amanita-web.vercel.app/checkout-design (agregar `?pais=XX` — ej. `?pais=BR` — para forzar el país del WhatsApp y demo de la geo por IP)
+**Referencia viva:** https://amanita-web.vercel.app/checkout-design — con **dos variantes de botones en evaluación por el equipo de Amanita**: [`/v1`](https://amanita-web.vercel.app/checkout-design/v1) (ornamental clásico con gemas) y [`/v2`](https://amanita-web.vercel.app/checkout-design/v2) (dorado, default). Un toggle flotante abajo a la derecha cambia entre versiones en vivo. **La variante ganadora se confirma antes de implementar** — el código de ambas está en `codigo/checkout/` (mapas `BAR_CTA_CLASSES` / `CONFIRM_BTN_CLASSES`); implementar solo la elegida, SIN el toggle (es una herramienta de decisión de la maqueta, no va a producción) (agregar `?pais=XX` — ej. `?pais=BR` — para forzar el país del WhatsApp y demo de la geo por IP)
 
 ---
 

@@ -1,6 +1,6 @@
 import type { Metadata } from 'next';
-import { headers } from 'next/headers';
 import { CheckoutExperience } from './CheckoutExperience';
+import { resolveInitialCountry, type CheckoutSearchParams } from './resolve-country';
 
 // Maqueta de diseño del checkout — interna, sin links desde el sitio.
 export const metadata: Metadata = {
@@ -8,19 +8,14 @@ export const metadata: Metadata = {
   title: 'Checkout Design — referencia interna',
 };
 
-// País del WhatsApp por IP REAL vía header de Vercel (x-vercel-ip-country) —
-// server-side, sin APIs externas; mismo concepto que la geo por IP de EdgeOS
-// (la que ya usan para rutear MP/Stripe). `?pais=XX` fuerza un país para
-// demos. Si el header no está (dev local), CheckoutExperience cae a
-// navigator.language y por último a AR.
+// País del WhatsApp por IP real: resolver compartido con /v1 y /v2 (ronda 4)
+// en resolve-country.ts. La raíz no fija `initialVariant`: muestra el default
+// (v2, botones dorados); /checkout-design/v1|v2 fijan la variante inicial.
 export default async function CheckoutDesignPage({
   searchParams,
 }: {
-  searchParams: Promise<{ pais?: string }>;
+  searchParams: Promise<CheckoutSearchParams>;
 }) {
-  const [hdrs, params] = await Promise.all([headers(), searchParams]);
-  const fromQuery = params.pais?.toUpperCase();
-  const fromIp = hdrs.get('x-vercel-ip-country')?.toUpperCase() ?? null;
-  const initialCountry = /^[A-Z]{2}$/.test(fromQuery ?? '') ? (fromQuery as string) : fromIp;
+  const initialCountry = await resolveInitialCountry(searchParams);
   return <CheckoutExperience initialCountry={initialCountry} />;
 }

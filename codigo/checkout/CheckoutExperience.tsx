@@ -13,6 +13,10 @@
  * Ronda 3 (Agus): CTA de avance de la barra en DORADO (btn-ornate-2 +
  * btn-gold-fill, el look del botón "que cobra" de la home) y "Cargos por
  * servicio" (10%) en el resumen de Confirmar + total de la barra.
+ * Ronda 4: selector flotante V1/V2 de botones para que el equipo vote —
+ * V1 = ornamentales clásicos con gemas (pre-ronda 3, commit 83eb67b),
+ * V2 = dorados actuales (default). Las rutas /v1 y /v2 fijan la variante
+ * inicial; el toggle la cambia en vivo sin perder carrito ni paso.
  */
 
 import { useCallback, useEffect, useMemo, useReducer, useState } from 'react';
@@ -27,6 +31,7 @@ import {
   InfoSection,
   WA_COUNTRIES,
   type BuyerInfo,
+  type ButtonVariant,
   type CartLine,
 } from './sections';
 
@@ -45,12 +50,17 @@ const LAST = SECTIONS.length - 1;
 const STEP_TICKETS = SECTIONS.findIndex((s) => s.id === 'tickets');
 const STEP_DATOS = SECTIONS.findIndex((s) => s.id === 'datos');
 
-/* CTA dorado de avance (ronda 3): réplica exacta del botón "que cobra" de la
-   home (auditoría 12/7) — marco ornamental btn-ornate-2 + fill btn-gold-fill
-   (interior sand #bfa67f, texto deep AA, glow y hover más claro con lift).
+/* CTA de avance de la barra por variante (ronda 4 — votación del equipo):
+   · v2 (default, ronda 3): réplica exacta del botón "que cobra" de la home
+     (auditoría 12/7) — marco btn-ornate-2 + fill btn-gold-fill (interior
+     sand #bfa67f, texto deep AA, ring nítido vía ck-gold, hover con lift).
+   · v1 (pre-ronda 3): clases EXACTAS del commit 83eb67b — btn-ornate
+     clásico, marco con gemas sobresalientes, fill navy y texto crema.
    Tamaños compactos propios de la barra; el "← Volver" sigue secundario. */
-const GOLD_BAR_CTA =
-  'btn-ornate-2 btn-gold-fill ck-gold flex shrink-0 items-center justify-center whitespace-nowrap !px-4 py-2.5 font-condensed text-xs font-medium uppercase tracking-[0.12em] transition-all duration-200 hover:-translate-y-0.5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-deep md:!px-6 md:text-sm';
+const BAR_CTA_CLASSES: Record<ButtonVariant, string> = {
+  v1: 'btn-ornate flex shrink-0 items-center justify-center whitespace-nowrap !px-4 py-2.5 font-condensed text-xs font-medium uppercase tracking-[0.1em] md:!px-6 md:text-sm',
+  v2: 'btn-ornate-2 btn-gold-fill ck-gold flex shrink-0 items-center justify-center whitespace-nowrap !px-4 py-2.5 font-condensed text-xs font-medium uppercase tracking-[0.12em] transition-all duration-200 hover:-translate-y-0.5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-deep md:!px-6 md:text-sm',
+};
 
 type CartState = Record<string, number>;
 type CartAction = { type: 'inc'; id: string } | { type: 'dec'; id: string };
@@ -66,7 +76,14 @@ function cartReducer(state: CartState, action: CartAction): CartState {
   return { ...state, [action.id]: current - 1 };
 }
 
-export function CheckoutExperience({ initialCountry = null }: { initialCountry?: string | null }) {
+export function CheckoutExperience({
+  initialCountry = null,
+  initialVariant = 'v2',
+}: {
+  initialCountry?: string | null;
+  /** estilo inicial de los CTAs (lo fijan /v1 y /v2); el toggle lo pisa en vivo */
+  initialVariant?: ButtonVariant;
+}) {
   /* Pais por IP real (header x-vercel-ip-country, resuelto en page.tsx) --
      validado contra la lista; llega igual en SSR y cliente -> sin mismatch. */
   const ipCountry =
@@ -86,6 +103,16 @@ export function CheckoutExperience({ initialCountry = null }: { initialCountry?:
   const [toast, setToast] = useState<string | null>(null);
   const [faqsOpen, setFaqsOpen] = useState(false);
   const closeFaqs = useCallback(() => setFaqsOpen(false), []);
+
+  /* Variante de botones (ronda 4): estado local — cambiar de versión NO
+     recarga ni toca carrito/paso; solo reescribe la URL (replaceState) a
+     /checkout-design/v1|v2 para que el link sea compartible, conservando
+     ?pais=XX de las demos. */
+  const [variant, setVariant] = useState<ButtonVariant>(initialVariant);
+  const switchVariant = useCallback((v: ButtonVariant) => {
+    setVariant(v);
+    window.history.replaceState(null, '', `/checkout-design/${v}${window.location.search}`);
+  }, []);
 
   /* País del WhatsApp auto-seleccionado SIN llamadas de red (regla de la
      maqueta): se deriva de navigator.language (es-AR → AR), fallback AR. En
@@ -306,6 +333,7 @@ export function CheckoutExperience({ initialCountry = null }: { initialCountry?:
         )}
         {current === 'confirmar' && (
           <ConfirmSection
+            variant={variant}
             lines={lines}
             subtotal={subtotal}
             discount={discount}
@@ -371,7 +399,7 @@ export function CheckoutExperience({ initialCountry = null }: { initialCountry?:
               <button
                 type="button"
                 onClick={() => goTo(STEP_TICKETS)}
-                className={GOLD_BAR_CTA}
+                className={BAR_CTA_CLASSES[variant]}
               >
                 Ver Entradas →
               </button>
@@ -397,12 +425,64 @@ export function CheckoutExperience({ initialCountry = null }: { initialCountry?:
               <button
                 type="button"
                 onClick={next}
-                className={GOLD_BAR_CTA}
+                className={BAR_CTA_CLASSES[variant]}
               >
                 {nextLabel} →
               </button>
             </>
           )}
+        </div>
+      </div>
+
+      {/* ── toggle flotante V1/V2 (ronda 4): votación interna del equipo.
+          Fijo abajo a la DERECHA y ARRIBA de la barra de total — bottom =
+          mismo max() de safe-area de la barra + su alto aprox (5.75rem),
+          así no la tapa ni en 375px. z-[45]: sobre la barra (z-40), bajo
+          toast (z-50) y drawer (z-[60]). Cambiar de versión es instantáneo
+          (mismo árbol → carrito y paso intactos). ── */}
+      <div
+        className="pointer-events-none fixed right-4 z-[45] flex flex-col items-end gap-1"
+        style={{ bottom: 'calc(max(0.75rem, env(safe-area-inset-bottom)) + 5.75rem)' }}
+      >
+        <span
+          className="pr-1 font-condensed text-[0.6rem] font-medium uppercase tracking-[0.2em]"
+          style={{ color: 'rgba(241,235,227,0.6)' }}
+        >
+          Botones
+        </span>
+        <div
+          role="group"
+          aria-label="Versión de los botones de la maqueta"
+          className="pointer-events-auto flex items-center gap-0.5 rounded-full border border-white/15 p-0.5"
+          style={{
+            backgroundColor: 'rgba(3,22,33,0.85)',
+            backdropFilter: 'blur(8px)',
+            WebkitBackdropFilter: 'blur(8px)',
+            boxShadow: '0 10px 30px rgba(1,15,22,0.5)',
+          }}
+        >
+          {(['v1', 'v2'] as const).map((v) => {
+            const isOn = variant === v;
+            return (
+              <button
+                key={v}
+                type="button"
+                onClick={() => switchVariant(v)}
+                aria-pressed={isOn}
+                aria-label={
+                  v === 'v1'
+                    ? 'Botones V1: marco ornamental con gemas'
+                    : 'Botones V2: dorado sólido'
+                }
+                className={`rounded-full px-2.5 py-1 font-condensed text-[0.65rem] font-medium uppercase tracking-[0.14em] transition-colors ${
+                  isOn ? 'bg-sand text-deep' : 'hover:text-cream'
+                }`}
+                style={isOn ? undefined : { color: 'rgba(241,235,227,0.7)' }}
+              >
+                {v.toUpperCase()}
+              </button>
+            );
+          })}
         </div>
       </div>
 

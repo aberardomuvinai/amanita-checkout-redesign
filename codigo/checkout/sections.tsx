@@ -18,6 +18,9 @@
  * la imagen del frame ornamental se estira feo en botones full-width),
  * como los botones que cobran de la home) + línea "Cargos por servicio (10%)"
  * en el resumen (el TOTAL ya la incluye, igual que la barra).
+ * Ronda 4: ConfirmSection recibe `variant` (votación V1/V2 del equipo) —
+ * v1 = btn-ornate clásico con gemas (clases exactas del commit 83eb67b),
+ * v2 = dorado ck-gold-solid. El toggle vive en CheckoutExperience.
  */
 
 import { Fragment, useEffect, useRef, useState, type ReactNode } from 'react';
@@ -34,6 +37,8 @@ export type BuyerInfo = {
 };
 export type InfoErrors = Partial<Record<keyof BuyerInfo, string>>;
 export type CartLine = { id: string; label: string; qty: number; amount: number };
+/** Variante de botones en votación (ronda 4): 'v1' ornate con gemas · 'v2' dorado */
+export type ButtonVariant = 'v1' | 'v2';
 
 /** Lista curada de países del select de WhatsApp. ⚠️ Se muestran como TEXTO
  *  "AR +54" — nada de emojis de bandera (no renderizan en Chrome/Windows,
@@ -783,7 +788,18 @@ export function FaqsDrawer({ open, onClose }: { open: boolean; onClose: () => vo
 
 /* ────────────────────────── 6 · Confirmar ────────────────────────── */
 
+/* Botón "Confirmar compra" por variante (ronda 4 — votación del equipo):
+   · v1: clases EXACTAS pre-ronda 3 (commit 83eb67b) — btn-ornate full-width
+     CON su marco de gemas (justamente lo que se evalúa en V1).
+   · v2 (ronda 3): dorado sólido ck-gold-solid (el frame webp se estira feo
+     en full-width) — ring-offset crema porque vive sobre la card clara. */
+const CONFIRM_BTN_CLASSES: Record<ButtonVariant, string> = {
+  v1: 'btn-ornate mt-6 flex w-full items-center justify-center !px-6 !py-3.5 font-condensed text-sm font-medium uppercase tracking-[0.12em]',
+  v2: 'ck-gold-solid mt-6 flex w-full items-center justify-center px-6 py-3.5 font-condensed text-sm font-medium uppercase tracking-[0.12em] transition-all duration-200 hover:-translate-y-0.5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-cream',
+};
+
 export function ConfirmSection({
+  variant,
   lines,
   subtotal,
   discount,
@@ -795,6 +811,8 @@ export function ConfirmSection({
   onConfirm,
   onGoTickets,
 }: {
+  /** estilo de los CTAs en votación: 'v1' ornate con gemas · 'v2' dorado */
+  variant: ButtonVariant;
   lines: CartLine[];
   subtotal: number;
   discount: number;
@@ -928,12 +946,12 @@ export function ConfirmSection({
             </div>
           </div>
 
-          {/* dorado como el CTA de la barra (ronda 3) — ring-offset crema
-              porque vive sobre la card clara */}
+          {/* mismo estilo que el CTA de la barra, según la variante en
+              votación (clases en CONFIRM_BTN_CLASSES, ronda 4) */}
           <button
             type="button"
             onClick={onConfirm}
-            className="ck-gold-solid mt-6 flex w-full items-center justify-center px-6 py-3.5 font-condensed text-sm font-medium uppercase tracking-[0.12em] transition-all duration-200 hover:-translate-y-0.5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-cream"
+            className={CONFIRM_BTN_CLASSES[variant]}
           >
             Confirmar compra →
           </button>
