@@ -532,25 +532,42 @@ export function CheckoutExperience({
         .ck-gold-solid:hover {
           background-color: #cdb48c;
         }
-        /* V1 (ronda 5): placa dorada con gemas por border-image. El slice 243
-           preserva las puntas con gemas a cualquier ancho; el centro liso se
-           estira sin deformarse. --v1-cap = ancho renderizado de cada punta
-           (proporcional a la altura del boton). */
+        /* V1 (ronda 6, asset "botondorado-nuevo"): placa bronce con gemas
+           laterales por border-image (slice 200 sobre el webp de 1600x322 —
+           el lienzo va recortado AL ALTO DE LA PLACA, por eso llena el boton
+           completo) + la GEMA CENTRAL como sprite ::after centrado, que asi
+           nunca se estira. Alto fijado = boton V2 (40px barra / 48px lg). */
         .ck-btn-v1 {
-          --v1-cap: 20px;
+          --v1-cap: 25px;
+          --v1-gem-h: 11px;
+          position: relative;
+          min-height: 40px;
           border-style: solid;
           border-color: transparent;
           border-width: 0 var(--v1-cap);
-          border-image: url('/brand/btn-dorado-gemas.webp') 0 243 fill / 0 var(--v1-cap) / 0 stretch;
+          border-image: url('/brand/btn-dorado-gemas.webp') 0 200 fill / 0 var(--v1-cap) / 0 stretch;
           background: none;
           color: #3d2a05;
           text-shadow: none;
+        }
+        .ck-btn-v1::after {
+          content: '';
+          position: absolute;
+          top: 0;
+          left: 50%;
+          transform: translateX(-50%);
+          height: var(--v1-gem-h);
+          aspect-ratio: 91 / 92;
+          background: url('/brand/btn-dorado2-gema.webp') center / contain no-repeat;
+          pointer-events: none;
         }
         .ck-btn-v1:hover {
           filter: brightness(1.06);
         }
         .ck-btn-v1-lg {
-          --v1-cap: 26px;
+          --v1-cap: 30px;
+          --v1-gem-h: 13px;
+          min-height: 48px;
         }
       `}</style>
     </div>
