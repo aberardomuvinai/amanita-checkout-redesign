@@ -54,11 +54,13 @@ const STEP_DATOS = SECTIONS.findIndex((s) => s.id === 'datos');
    · v2 (default, ronda 3): réplica exacta del botón "que cobra" de la home
      (auditoría 12/7) — marco btn-ornate-2 + fill btn-gold-fill (interior
      sand #bfa67f, texto deep AA, ring nítido vía ck-gold, hover con lift).
-   · v1 (pre-ronda 3): clases EXACTAS del commit 83eb67b — btn-ornate
-     clásico, marco con gemas sobresalientes, fill navy y texto crema.
+   · v1 (ronda 5): asset "botondorado" que pasó Agus — placa dorada con
+     gemas violetas en las puntas, integrada por border-image (slice 243 de
+     los caps en el webp de 1600px): las gemas nunca se deforman y solo se
+     estira el centro liso. Texto bronce oscuro AA sobre el dorado.
    Tamaños compactos propios de la barra; el "← Volver" sigue secundario. */
 const BAR_CTA_CLASSES: Record<ButtonVariant, string> = {
-  v1: 'btn-ornate flex shrink-0 items-center justify-center whitespace-nowrap !px-4 py-2.5 font-condensed text-xs font-medium uppercase tracking-[0.1em] md:!px-6 md:text-sm',
+  v1: 'ck-btn-v1 flex shrink-0 items-center justify-center whitespace-nowrap px-3 py-2.5 font-condensed text-xs font-medium uppercase tracking-[0.12em] transition-all duration-200 hover:-translate-y-0.5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-deep md:px-5 md:text-sm',
   v2: 'btn-ornate-2 btn-gold-fill ck-gold flex shrink-0 items-center justify-center whitespace-nowrap !px-4 py-2.5 font-condensed text-xs font-medium uppercase tracking-[0.12em] transition-all duration-200 hover:-translate-y-0.5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-deep md:!px-6 md:text-sm',
 };
 
@@ -529,6 +531,26 @@ export function CheckoutExperience({
         }
         .ck-gold-solid:hover {
           background-color: #cdb48c;
+        }
+        /* V1 (ronda 5): placa dorada con gemas por border-image. El slice 243
+           preserva las puntas con gemas a cualquier ancho; el centro liso se
+           estira sin deformarse. --v1-cap = ancho renderizado de cada punta
+           (proporcional a la altura del boton). */
+        .ck-btn-v1 {
+          --v1-cap: 20px;
+          border-style: solid;
+          border-color: transparent;
+          border-width: 0 var(--v1-cap);
+          border-image: url('/brand/btn-dorado-gemas.webp') 0 243 fill / 0 var(--v1-cap) / 0 stretch;
+          background: none;
+          color: #3d2a05;
+          text-shadow: none;
+        }
+        .ck-btn-v1:hover {
+          filter: brightness(1.06);
+        }
+        .ck-btn-v1-lg {
+          --v1-cap: 26px;
         }
       `}</style>
     </div>

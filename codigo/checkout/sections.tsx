@@ -794,7 +794,7 @@ export function FaqsDrawer({ open, onClose }: { open: boolean; onClose: () => vo
    · v2 (ronda 3): dorado sólido ck-gold-solid (el frame webp se estira feo
      en full-width) — ring-offset crema porque vive sobre la card clara. */
 const CONFIRM_BTN_CLASSES: Record<ButtonVariant, string> = {
-  v1: 'btn-ornate mt-6 flex w-full items-center justify-center !px-6 !py-3.5 font-condensed text-sm font-medium uppercase tracking-[0.12em]',
+  v1: 'ck-btn-v1 ck-btn-v1-lg mt-6 flex w-full items-center justify-center px-6 py-3.5 font-condensed text-sm font-medium uppercase tracking-[0.12em] transition-all duration-200 hover:-translate-y-0.5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-cream',
   v2: 'ck-gold-solid mt-6 flex w-full items-center justify-center px-6 py-3.5 font-condensed text-sm font-medium uppercase tracking-[0.12em] transition-all duration-200 hover:-translate-y-0.5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-cream',
 };
 
